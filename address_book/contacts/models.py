@@ -16,3 +16,11 @@ class Contact(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+
+class ContactGroup(models.Model):
+    name = models.CharField(max_length=50)
+    contacts = models.ManyToManyField(Contact, related_name='contact_groups')
+
+    def __str__(self):
+        return self.name

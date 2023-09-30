@@ -1,0 +1,39 @@
+from  rest_framework import serializers
+
+from  contact_book.models import ContactBook, Events
+
+
+class ContactBookSerializer(serializers.ModelSerializer):
+    def validate(self, data):
+        if data['first_name'] == data['last_name']:
+            raise serializers.ValidationError('the first and last name fields cannot be the same')
+        return data
+
+    class Meta:
+        model = ContactBook
+        fields = "__all__"
+
+
+class EventsSerializer(serializers.ModelSerializer):
+    contact_book = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Events
+        fields = '__all__'
+
+    def get_contact_book(self, obj):
+        contact_data = []
+        for contact in obj.contact_book.all():
+            contact_data.append({
+                'id': contact.pk,
+                'first_name': contact.first_name,
+                'last_name': contact.last_name
+            })
+        return contact_data
+
+
+
+    # def get_contact_book(self, obj):
+    #     data = obj.contact_book.values('first_name', 'last_name', 'pk')
+    #     return data
+

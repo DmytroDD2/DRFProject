@@ -1,13 +1,31 @@
 from rest_framework import serializers
-from contacts.models import Contact
-
+from rest_framework.validators import UniqueValidator
+from contacts.models import Contact, ContactGroup
 
 class ContactSerializer(serializers.ModelSerializer):
+    # city = serializers.CharField(max_length=10, validators=[UniqueValidator(queryset=Contact.objects.all())])
+
+    # def validate(self, data):
+    #     if data['first_name'] == data['last_name']:
+    #         raise serializers.ValidationError("lasjdfljasldf")
+    #     return data
+
+
+    # def validate_city(self, value):
+    #     if value == 'ncorrect':
+    #         raise serializers.ValidationError('City cannot be "Incorrect"')
+    #     return value
+
     class Meta:
         model = Contact
         fields = '__all__'
 
 
+class ContactGroupSerializer(serializers.ModelSerializer):
+    contacts = ContactSerializer(many=True)
+    class Meta:
+        model = ContactGroup
+        fields = '__all__'
 
 
 
