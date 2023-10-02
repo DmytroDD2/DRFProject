@@ -1,6 +1,6 @@
-from  rest_framework import serializers
+from rest_framework import serializers
 
-from  contact_book.models import ContactBook, Events
+from contact_book.models import ContactBook, Events
 
 
 class ContactBookSerializer(serializers.ModelSerializer):
@@ -14,22 +14,20 @@ class ContactBookSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ContactBook2Serializer(ContactBookSerializer):
+    class Meta:
+        model = ContactBook
+        fields = ['id', 'first_name', 'last_name']
+
+
 class EventsSerializer(serializers.ModelSerializer):
-    contact_book = serializers.SerializerMethodField()
+    contact_book = ContactBook2Serializer(many=True)
+
 
     class Meta:
         model = Events
         fields = '__all__'
 
-    def get_contact_book(self, obj):
-        contact_data = []
-        for contact in obj.contact_book.all():
-            contact_data.append({
-                'id': contact.pk,
-                'first_name': contact.first_name,
-                'last_name': contact.last_name
-            })
-        return contact_data
 
 
 
