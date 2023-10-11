@@ -14,7 +14,7 @@ class ContactBookSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ContactBook2Serializer(ContactBookSerializer):
+class ContactBook2Serializer(serializers.ModelSerializer):
     class Meta:
         model = ContactBook
         fields = ['id', 'first_name', 'last_name']
@@ -22,7 +22,6 @@ class ContactBook2Serializer(ContactBookSerializer):
 
 class EventsSerializer(serializers.ModelSerializer):
     contact_book = ContactBook2Serializer(many=True)
-
 
     class Meta:
         model = Events

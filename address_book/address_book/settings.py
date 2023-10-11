@@ -85,12 +85,22 @@ WSGI_APPLICATION = 'address_book.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'address_book',
+#         'USER': 'my_user',
+#         'PASSWORD': 'password',
+#         'HOST': 'db',
+#         'PORT': '5432'
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'drf_project_test',
-        'USER': 'django_prodject_test',
-        'PASSWORD': 'password',
+        'NAME': 'adrress_book',
+        'USER': 'postgres',
+        'PASSWORD': '23109',
         'HOST': 'localhost',
         'PORT': '5432'
     }

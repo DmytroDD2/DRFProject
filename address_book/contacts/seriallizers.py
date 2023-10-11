@@ -1,6 +1,14 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from contacts.models import Contact, ContactGroup
+from contacts.models import Contact, ContactGroup, ContactActivityLog
+
+
+class ContactActivityLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactActivityLog
+        fields = '__all__'
+
+
 
 class ContactSerializer(serializers.ModelSerializer):
     # city = serializers.CharField(max_length=10, validators=[UniqueValidator(queryset=Contact.objects.all())])

@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Contact(models.Model):
     first_name = models.CharField(max_length=30)
@@ -7,7 +8,7 @@ class Contact(models.Model):
     country = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
     street = models.CharField(max_length=30)
-    url = models.URLField(max_length=200, unique=True)
+    url = models.URLField(max_length=200)
     phone = models.CharField(max_length=30)
     image = models.ImageField(upload_to='contacts/', blank=True, null=True)
 
@@ -15,7 +16,7 @@ class Contact(models.Model):
         unique_together = ['first_name', 'last_name']
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'{self.first_name} {self.last_name}' + "Example"
 
 
 class ContactGroup(models.Model):
@@ -24,3 +25,23 @@ class ContactGroup(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ContactActivityLog(models.Model):
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
+    activity_type = models.CharField(max_length=50, choices=[('CREATED', 'Created'), ('EDITED', 'Edited')])
+    timestamp = models.DateTimeField(auto_now_add=True)
+    details = models.TextField()
+
+    def __str__(self):
+        return f"{self.contact} was {self.activity_type}: {self.timestamp}"
+
+
+@receiver(post_save, sender=Contact)
+def create_contact_activity_log(sender, instance, created, **kwargs):
+    if created:
+        ContactActivityLog.objects.create(
+            contact=instance,
+            activity_type='CREATED',
+            details=f"Contact {instance} was created."
+        )

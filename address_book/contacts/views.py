@@ -1,27 +1,38 @@
-
+import django_filters
+from django_filters import rest_framework as filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 
-from contacts.models import Contact, ContactGroup
+from contacts.models import Contact, ContactGroup, ContactActivityLog
 from contacts.seriallizers import ContactSerializer, ContactGroupSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
-from rest_framework import filters
-
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import viewsets, permissions
 
 
-class ContactViewSet(ModelViewSet):
+
+
+class ContactFilter(django_filters.FilterSet):
+    first_name = django_filters.CharFilter(field_name='first_name', lookup_expr='icontains')
+    city = django_filters.CharFilter(field_name='city', lookup_expr='icontains')
+
+    class Meta:
+        model = Contact
+        fields = ['first_name', 'city']
+
+
+class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['first_name', 'last_name', "city"]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ContactFilter
+    search_fields = ['first_name', 'last_name', 'city', 'country', 'street']
     # permission_classes = [IsAuthenticated]
 
 
-class ContactGroupViewSet(ModelViewSet):
+class ContactGroupViewSet(viewsets.ModelViewSet):
     queryset = ContactGroup.objects.prefetch_related("contacts").all()
     serializer_class = ContactGroupSerializer
 
