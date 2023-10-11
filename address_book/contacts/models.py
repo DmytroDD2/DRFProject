@@ -40,8 +40,12 @@ class ContactActivityLog(models.Model):
 @receiver(post_save, sender=Contact)
 def create_contact_activity_log(sender, instance, created, **kwargs):
     if created:
-        ContactActivityLog.objects.create(
-            contact=instance,
-            activity_type='CREATED',
-            details=f"Contact {instance} was created."
-        )
+        activity_type = 'CREATED'
+    else:
+        activity_type = 'EDITED'
+
+    ContactActivityLog.objects.create(
+        contact=instance,
+        activity_type=activity_type,
+        details=f"Contact {instance} was created."
+    )

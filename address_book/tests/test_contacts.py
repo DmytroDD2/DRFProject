@@ -91,6 +91,23 @@ def test_contact_creation_creates_activity_log(contact):
     assert activity_log.contact == contact
 
 
+@pytest.mark.django_db
+def test_contact_creation_change_activity_log(contact):
+    contact.first_name = 'Janeadasfas'
+    contact.save()
+    activity_logs = ContactActivityLog.objects.filter(contact=contact)
+    activity_log = activity_logs.last()
+
+    assert activity_log.activity_type == 'EDITED'
+    assert activity_log.timestamp is not None
+    assert activity_log.contact == contact
+
+    updated_contact = Contact.objects.get(id=contact.id)
+    assert updated_contact.first_name == 'Janeadasfas'
+    assert updated_contact.last_name == 'Doe'
+
+
+
 
 
 

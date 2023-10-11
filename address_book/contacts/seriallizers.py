@@ -3,10 +3,6 @@ from rest_framework.validators import UniqueValidator
 from contacts.models import Contact, ContactGroup, ContactActivityLog
 
 
-class ContactActivityLogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ContactActivityLog
-        fields = '__all__'
 
 
 
