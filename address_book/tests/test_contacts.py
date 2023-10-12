@@ -109,9 +109,19 @@ def test_contact_creation_change_activity_log(contact):
     assert updated_contact.last_name == 'Doe'
 
 
+@pytest.fixture
+def mock_contact_delete(mocker):
+    return mocker.patch.object(ContactViewSet, 'destroy')
 
+@pytest.mark.django_db
+def test_delete_contact(mock_contact_delete, contact):
 
+    mock_contact_delete(contact)
+    is_contact_delete = Contact.objects.filter(pk=contact.pk).exists()
 
+    assert mock_contact_delete.call_args_list == [call(contact)]
+    assert mock_contact_delete.call_count == 1
+    assert is_contact_delete is True
 
 
 
@@ -133,6 +143,11 @@ def test_create_contact_without_saving(mock_contact_create):
     mock_contact_create(data)
     assert mock_contact_create.call_args_list == [call(data)]
     assert mock_contact_create.call_count == 1
+
+
+
+
+
 
 
 
