@@ -1,3 +1,5 @@
+import json
+
 from django.test import TestCase
 import pytest
 from django.urls import reverse
@@ -8,7 +10,7 @@ from django.test import TestCase
 from contacts.models import Contact
 
 from contacts.models import Contact, ContactActivityLog, ContactGroup
-from contacts.seriallizers import ContactSerializer
+from contacts.seriallizers import ContactSerializer, ContactGroupSerializer
 from contacts.views import ContactViewSet
 from unittest.mock import Mock, call
 from rest_framework import serializers
@@ -133,13 +135,6 @@ def test_create_contact_without_saving(mock_contact_create):
     assert mock_contact_create.call_count == 1
 
 
-# @pytest.fixture
-# def contact():
-#     return ContactGroup.objects.create(
-#         name="Group name",
-#         contacts ={Contact.pk:1,
-#                    Contact.pk: 2}
-#     )
 
 
 @pytest.mark.django_db
@@ -152,27 +147,31 @@ def test_create_group(contact):
 
 
 
+@pytest.fixture
+def contact_ser():
+    contact1 = Contact.objects.create(first_name="John", city="NY")
+    contact2 = Contact.objects.create(first_name="Jane", city="LA")
+    group = ContactGroup.objects.create(name='lasdjflajfljasldfkjasdf')
+    group.contacts.add(contact1, contact2)
+    return group
+
+@pytest.mark.django_db
+def test_group_serializer(contact_ser):
+    serialized = ContactGroupSerializer(contact_ser).data
+    json_data = json.dumps(serialized)
+
+    deserialized_data = json.loads(json_data)
+    assert deserialized_data['name'] == 'lasdjflajfljasldfkjasdf'
+    assert len(deserialized_data['contacts']) == 2
+
+    for contact_data in serialized['contacts']:
+        contact = Contact.objects.get(id=contact_data['id'])
+
+        assert contact_data['first_name'] == contact.first_name
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-# class ContactGroup(models.Model):
-#     name = models.CharField(max_length=50)
-#     contacts = models.ManyToManyField(Contact, related_name='contact_groups')
-#
-#     def __str__(self):
-#         return self.name
 
 
 
