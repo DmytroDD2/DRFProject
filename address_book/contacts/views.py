@@ -31,7 +31,6 @@ class ContactViewSet(viewsets.ModelViewSet):
     search_fields = ['first_name', 'last_name', 'city', 'country', 'street']
     # permission_classes = [IsAuthenticated]
 
-
 class ContactGroupViewSet(viewsets.ModelViewSet):
     queryset = ContactGroup.objects.prefetch_related("contacts").all()
     serializer_class = ContactGroupSerializer

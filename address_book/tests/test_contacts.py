@@ -1,6 +1,7 @@
 from django.test import TestCase
 import pytest
 from django.urls import reverse
+from pytest_mock import mocker
 from rest_framework.test import APIClient
 from django.test import TestCase
 
@@ -9,9 +10,9 @@ from contacts.seriallizers import ContactSerializer
 
 from contacts.models import Contact, ContactActivityLog
 from contacts.seriallizers import ContactSerializer
-
-
-
+from contacts.views import ContactViewSet
+from unittest.mock import Mock, call
+from rest_framework import serializers
 @pytest.fixture
 def api_clint():
     return APIClient()
@@ -113,15 +114,24 @@ def test_contact_creation_change_activity_log(contact):
 
 
 
+@pytest.fixture
+def mock_contact_create(mocker):
+    return mocker.patch.object(ContactViewSet, 'create')
 
 
+@pytest.mark.django_db
+def test_create_contact_without_saving(mock_contact_create):
+    data = {
+        'first_name': 'John',
+        'last_name': 'Doe',
+        'country': 'USA',
+        'city': 'NY',
+        'street': 'Main street',
+    }
 
-
-
-
-
-
-
+    mock_contact_create(data)
+    assert mock_contact_create.call_args_list == [call(data)]
+    assert mock_contact_create.call_count == 1
 
 
 
