@@ -1,5 +1,6 @@
 import json
 
+from django.db import IntegrityError
 from django.test import TestCase
 import pytest
 from django.urls import reverse
@@ -118,7 +119,6 @@ def test_delete_contact(mock_contact_delete, contact):
 
     mock_contact_delete(contact)
     is_contact_delete = Contact.objects.filter(pk=contact.pk).exists()
-
     assert mock_contact_delete.call_args_list == [call(contact)]
     assert mock_contact_delete.call_count == 1
     assert is_contact_delete is True
@@ -183,6 +183,14 @@ def test_group_serializer(contact_ser):
         contact = Contact.objects.get(id=contact_data['id'])
 
         assert contact_data['first_name'] == contact.first_name
+
+
+@pytest.mark.django_db
+def test_create_contact_raises():
+    Contact.objects.create(first_name='John', last_name='Doe', city='NY')
+
+    with pytest.raises(IntegrityError):
+        Contact.objects.create(first_name='John', last_name='Doe', city='VY')
 
 
 
