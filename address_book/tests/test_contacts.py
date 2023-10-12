@@ -6,9 +6,8 @@ from rest_framework.test import APIClient
 from django.test import TestCase
 
 from contacts.models import Contact
-from contacts.seriallizers import ContactSerializer
 
-from contacts.models import Contact, ContactActivityLog
+from contacts.models import Contact, ContactActivityLog, ContactGroup
 from contacts.seriallizers import ContactSerializer
 from contacts.views import ContactViewSet
 from unittest.mock import Mock, call
@@ -134,9 +133,46 @@ def test_create_contact_without_saving(mock_contact_create):
     assert mock_contact_create.call_count == 1
 
 
+# @pytest.fixture
+# def contact():
+#     return ContactGroup.objects.create(
+#         name="Group name",
+#         contacts ={Contact.pk:1,
+#                    Contact.pk: 2}
+#     )
+
+
+@pytest.mark.django_db
+def test_create_group(contact):
+    group = ContactGroup.objects.create(name='lasdjflajfljasldfkjasdf')
+    group.contacts.add(contact)
+    assert contact in group.contacts.all()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# class ContactGroup(models.Model):
+#     name = models.CharField(max_length=50)
+#     contacts = models.ManyToManyField(Contact, related_name='contact_groups')
+#
+#     def __str__(self):
+#         return self.name
 
 
 
